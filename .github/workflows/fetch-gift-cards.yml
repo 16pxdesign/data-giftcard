@@ -40,7 +40,8 @@ jobs:
         uses: actions-js/push@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          message: 'Update gift card data - $(date +%Y-%m-%d\ %H:%M:%S)'
+          message: 'Update gift card data - ${{ github.event.repository.updated_at }}'
           author_email: 'github-actions[bot]@users.noreply.github.com'
           author_name: 'github-actions[bot]'
           branch: 'master'
+          rebase: true
