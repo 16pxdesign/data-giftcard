@@ -45,14 +45,10 @@ jobs:
             > data/$(date +%Y-%m-%d).json
 
       - name: Commit and push changes
-        run: |
-          git config --global user.name 'GitHub Actions'
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git add data/
-          if ! git diff --cached --quiet; then
-            git commit -m "Automated gift card data update - $(date +%Y-%m-%d' '%H:%M:%S)"
-            git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
-            git push
-          else
-            echo "No changes to commit"
-          fi
+        uses: actions-js/push@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          message: 'Update gift card data - $(date +%Y-%m-%d\ %H:%M:%S)'
+          author_email: 'github-actions[bot]@users.noreply.github.com'
+          author_name: 'github-actions[bot]'
+          branch: 'master'
