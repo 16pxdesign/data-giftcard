@@ -42,7 +42,7 @@ jobs:
             -H 'sec-fetch-mode: cors' \
             -H 'sec-fetch-site: same-site' \
             -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36' \
-            > data/$(date +%Y-%m-%d_%H-%M-%S).json
+            | jq '.' > data/$(date +%Y-%m-%d_%H-%M-%S).json
 
       - name: Commit and push changes
         uses: actions-js/push@master
