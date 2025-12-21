@@ -1,0 +1,53 @@
+name: Fetch Gift Card Brands
+
+on:
+  schedule:
+    # Run 3 times a day: 8:00 AM, 3:00 PM, 10:00 PM UTC
+    - cron: '0 8,15,22 * * *'
+  # Allow manual trigger
+  workflow_dispatch:
+
+jobs:
+  fetch-data:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create data directory
+        run: mkdir -p data
+
+      - name: Fetch gift card brands
+        run: |
+          curl 'https://api.everup.uk/v1/gift-card-brands' \
+            -H 'accept: application/json' \
+            -H 'accept-language: en-US,en;q=0.9' \
+            -H 'cache-control: no-cache' \
+            -H 'expires: 0' \
+            -H 'origin: https://everup.uk' \
+            -H 'pragma: no-cache' \
+            -H 'priority: u=1, i' \
+            -H 'referer: https://everup.uk/' \
+            -H 'sec-ch-ua: "Google Chrome";v="141", "Not?A_Brand";v="8", "Chromium";v="141"' \
+            -H 'sec-ch-ua-mobile: ?0' \
+            -H 'sec-ch-ua-platform: "Windows"' \
+            -H 'sec-fetch-dest: empty' \
+            -H 'sec-fetch-mode: cors' \
+            -H 'sec-fetch-site: same-site' \
+            -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36' \
+            > data/$(date +%Y-%m-%d).json
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
+          git add data/
+          if ! git diff --cached --quiet; then
+            git commit -m "Update gift card data - $(date +%Y-%m-%d' '%H:%M:%S)"
+            git push
+          else
+            echo "No changes to commit"
+          fi
