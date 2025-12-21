@@ -7,9 +7,6 @@ on:
   # Allow manual trigger
   workflow_dispatch:
 
-permissions:
-  contents: write
-
 jobs:
   fetch-data:
     runs-on: ubuntu-latest
@@ -17,15 +14,10 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Create data directory
-        run: mkdir -p data
 
       - name: Fetch gift card brands
         run: |
+          mkdir -p data
           curl 'https://api.everup.uk/v1/gift-card-brands' \
             -H 'accept: application/json' \
             -H 'accept-language: en-US,en;q=0.9' \
