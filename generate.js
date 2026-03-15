@@ -21,6 +21,12 @@ const html = `<!DOCTYPE html>
 
         const avg = ${avgStr};
 
+        // Generate colors for each data point
+        const pointColors = data.map((_, index) => {
+            const hue = (index * 137.5) % 360; // Golden angle approximation for distinct colors
+            return 'hsl(' + hue + ', 70%, 50%)';
+        });
+
         const ctx = document.getElementById('rewardsChart').getContext('2d');
         const chart = new Chart(ctx, {
             type: 'line',
@@ -30,13 +36,19 @@ const html = `<!DOCTYPE html>
                     label: 'Tesco Rewards %',
                     data: data.map(d => d.totalRewardsPerc),
                     borderColor: 'rgb(75, 192, 192)',
-                    tension: 0.1
+                    backgroundColor: pointColors,
+                    pointBackgroundColor: pointColors,
+                    pointBorderColor: pointColors.map(color => color.replace('50%)', '30%)')),
+                    tension: 0.1,
+                    fill: false
                 }, {
-                    label: 'Average',
+                    label: 'Average: ' + avg + '%',
                     data: data.map(() => avg),
                     borderColor: 'rgb(255, 99, 132)',
                     borderDash: [5, 5],
-                    tension: 0.1
+                    tension: 0.1,
+                    pointRadius: 0,
+                    fill: false
                 }]
             },
             options: {
