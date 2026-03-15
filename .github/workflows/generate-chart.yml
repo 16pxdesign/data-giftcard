@@ -1,0 +1,36 @@
+name: Generate Chart
+
+on:
+  # Allow manual trigger
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate-chart:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Generate chart
+        run: make generate
+
+      - name: Commit and push changes
+        uses: actions-js/push@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          message: 'Update chart data - $(date +%Y-%m-%d\ %H:%M:%S)'
+          author_email: 'github-actions[bot]@users.noreply.github.com'
+          author_name: 'github-actions[bot]'
+          branch: 'master'
