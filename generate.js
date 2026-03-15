@@ -22,10 +22,17 @@ const html = `<!DOCTYPE html>
 
         const avg = ${avgStr};
 
-        // Generate colors for each data point
-        const pointColors = data.map((_, index) => {
+        // Get unique dates and assign colors to each date
+        const uniqueDates = [...new Set(data.map(d => d.date))];
+        const dateColors = uniqueDates.map((_, index) => {
             const hue = (index * 137.5) % 360; // Golden angle approximation for distinct colors
             return 'hsl(' + hue + ', 70%, 50%)';
+        });
+        
+        // Create color array for each data point based on its date
+        const pointColors = data.map(d => {
+            const dateIndex = uniqueDates.indexOf(d.date);
+            return dateColors[dateIndex];
         });
 
         const ctx = document.getElementById('rewardsChart').getContext('2d');
