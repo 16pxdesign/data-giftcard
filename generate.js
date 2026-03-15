@@ -1,5 +1,6 @@
 const fs = require('fs');
 
+
 const { data, avg } = JSON.parse(fs.readFileSync('temp_data.json', 'utf8'));
 const dataStr = JSON.stringify(data, null, 2);
 const avgStr = avg.toFixed(2);
