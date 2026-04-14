@@ -28,8 +28,8 @@ const latest = data[data.length - 1];
 const previous = data[data.length - 2];
 
 console.log(`Average: ${avg.toFixed(2)}%`);
-console.log(`Latest (${latest.filePath}): ${latest.totalRewardsPerc.toFixed(2)}%`);
-console.log(`Previous (${previous.filePath}): ${previous.totalRewardsPerc.toFixed(2)}%`);
+console.log(`Latest (${latest.datePart}-${latest.timePart}): ${latest.totalRewardsPerc.toFixed(2)}%`);
+console.log(`Previous (${previous.datePart}-${latest.timePart}): ${previous.totalRewardsPerc.toFixed(2)}%`);
 
 if (latest.totalRewardsPerc > avg && latest.totalRewardsPerc > previous.totalRewardsPerc) {
   console.log('Condition met: Notify owner.');
