@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const dataDir = './data';
-const files = fs.readdirSync(dataDir).filter(f => f.endsWith('.json')); 
+const files = fs.readdirSync(dataDir).filter(f => f.endsWith('.json'));
 
 const data = files.map(file => {
   const parts = file.replace('.json', '').split('_');
@@ -19,6 +19,7 @@ const data = files.map(file => {
 
 if (data.length < 2) {
   console.log('Not enough data to compare.');
+  console.log('::set-output name=alert::false');
   process.exit(0);
 }
 
@@ -32,8 +33,10 @@ console.log(`Previous (${previous.date}): ${previous.totalRewardsPerc.toFixed(2)
 
 if (latest.totalRewardsPerc > avg && latest.totalRewardsPerc > previous.totalRewardsPerc) {
   console.log('Condition met: Notify owner.');
+  console.log('::set-output name=alert::true');
   process.exit(0);
 } else {
   console.log('Condition not met.');
+  console.log('::set-output name=alert::false');
   process.exit(0);
 }
