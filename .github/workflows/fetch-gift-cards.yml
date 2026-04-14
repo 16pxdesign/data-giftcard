@@ -45,6 +45,15 @@ jobs:
             -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36' \
             | jq '.' > data/$(date +%Y-%m-%d_%H-%M-%S).json
 
+      - name: Commit and push changes
+        uses: actions-js/push@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          message: 'Update gift card data - $(date +%Y-%m-%d\ %H:%M:%S)'
+          author_email: 'github-actions[bot]@users.noreply.github.com'
+          author_name: 'github-actions[bot]'
+          branch: 'master'
+
       - name: Check Tesco rewards
         id: check
         run: make check
@@ -66,12 +75,3 @@ jobs:
               body: `Tesco total_rewards_perc is now ${perc}%, which is above average and previous value. Check the latest data.`,
               assignees: [context.repo.owner]
             });
-
-      - name: Commit and push changes
-        uses: actions-js/push@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          message: 'Update gift card data - $(date +%Y-%m-%d\ %H:%M:%S)'
-          author_email: 'github-actions[bot]@users.noreply.github.com'
-          author_name: 'github-actions[bot]'
-          branch: 'master'
