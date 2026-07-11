@@ -12,10 +12,13 @@ const data = files.map(file => {
   const date = new Date(dateStr);
   const filePath = path.join(dataDir, file);
   const content = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+  if (!Array.isArray(content.brands)) {
+    return null;
+  }
   const tesco = content.brands.find(b => b.id === 'tesco');
   const totalRewardsPerc = tesco ? tesco.total_rewards_perc * 100 : null;
   return { date: date.toISOString().split('T')[0], totalRewardsPerc };
-}).sort((a, b) => new Date(a.date) - new Date(b.date));
+}).filter(d => d).sort((a, b) => new Date(a.date) - new Date(b.date));
 
 const avg = data.reduce((sum, d) => sum + d.totalRewardsPerc, 0) / data.length;
 
