@@ -12,10 +12,13 @@ const data = files.map(file => {
   const date = new Date(dateStr);
   const filePath = path.join(dataDir, file);
   const content = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+  if (!Array.isArray(content.brands)) {
+    return null;
+  }
   const tesco = content.brands.find(b => b.id === 'tesco');
   const totalRewardsPerc = tesco ? tesco.total_rewards_perc * 100 : null;
   return { date: date.toISOString().split('T')[0], totalRewardsPerc, timestamp: date.getTime() };
-}).filter(d => d.totalRewardsPerc !== null).sort((a, b) => a.timestamp - b.timestamp);
+}).filter(d => d && d.totalRewardsPerc !== null).sort((a, b) => a.timestamp - b.timestamp);
 
 if (data.length < 2) {
   console.log('Not enough data to compare.');
