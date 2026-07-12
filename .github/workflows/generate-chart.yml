@@ -4,6 +4,10 @@ on:
   # Allow manual trigger
   workflow_dispatch:
 
+concurrency:
+  group: master-push
+  cancel-in-progress: false
+
 permissions:
   contents: write
 
@@ -27,10 +31,24 @@ jobs:
         run: make generate
 
       - name: Commit and push changes
-        uses: actions-js/push@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          message: 'Update chart data - $(date +%Y-%m-%d\ %H:%M:%S)'
-          author_email: 'github-actions[bot]@users.noreply.github.com'
-          author_name: 'github-actions[bot]'
-          branch: 'master'
+        run: |
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git config user.name 'github-actions[bot]'
+          git add chart.html
+          if git diff --staged --quiet; then
+            echo "No chart changes to commit."
+            exit 0
+          fi
+          git commit -m "Update chart data - $(date +%Y-%m-%d\ %H:%M:%S)"
+
+          for attempt in 1 2 3 4 5; do
+            if git push origin HEAD:master; then
+              exit 0
+            fi
+            echo "Push rejected (attempt $attempt), rebasing onto latest master and retrying..."
+            git fetch origin master
+            git rebase origin/master
+          done
+
+          echo "::error::Failed to push after several retries."
+          exit 1
